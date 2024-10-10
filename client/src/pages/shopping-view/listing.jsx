@@ -1,4 +1,5 @@
 import ProductFilter from "@/components/shopping-view/filter";
+import ProductDetailsDialog from "@/components/shopping-view/product-details";
 import ShoppingProductTile from "@/components/shopping-view/product-tile";
 import { Button } from "@/components/ui/button";
 import {
@@ -9,19 +10,29 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { sortOptions } from "@/config";
-import { getFilteredProducts } from "@/store/shop-products-slice";
+import {
+  getDetailedProducts,
+  getFilteredProducts,
+} from "@/store/shop-products-slice";
 import { ArrowUpDownIcon } from "lucide-react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useSearchParams } from "react-router-dom";
 
 function ShoppiungListing() {
   const dispatch = useDispatch();
   const [searchParams, setSearchParams] = useSearchParams();
-  const { productList = [], isLoading } = useSelector(
-    (state) => state.shopProducts,
-  );
-  console.log(productList);
+  const [openDetailsDialog, setOpenDetailsDialog] = useState(false);
+  const {
+    productList = [],
+    productDetails,
+    isLoading,
+  } = useSelector((state) => state.shopProducts);
+
+  function handleGetDetailsProduct(productId) {
+    dispatch(getDetailedProducts(productId));
+  }
+
   // fetch list of products
   useEffect(() => {
     dispatch(
@@ -31,6 +42,10 @@ function ShoppiungListing() {
       }),
     );
   }, [searchParams.get("filter"), searchParams.get("sortBy")]);
+
+  useEffect(() => {
+    if (productDetails !== null) setOpenDetailsDialog(true);
+  }, [productDetails]);
 
   return (
     <div className="grid grid-cols-1 gap-6 p-4 md:grid-cols-[300px_1fr] md:p-6">
@@ -73,10 +88,18 @@ function ShoppiungListing() {
           {isLoading
             ? "Loading..."
             : productList?.map((product) => (
-                <ShoppingProductTile product={product} />
+                <ShoppingProductTile
+                  handleGetDetailsProduct={handleGetDetailsProduct}
+                  product={product}
+                />
               ))}
         </div>
       </div>
+      <ProductDetailsDialog
+        open={openDetailsDialog}
+        setOpen={setOpenDetailsDialog}
+        productDetails={productDetails}
+      />
     </div>
   );
 }

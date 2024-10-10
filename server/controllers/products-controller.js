@@ -57,6 +57,11 @@ const addUrlProducts = function (listOfProducts, req) {
   })
 }
 
+const addUrlProduct = function (product, req) {
+  product.imageUrl = `${req.protocol}://${req.get("host")}${product.imageUrl}`
+  return product
+}
+
 const getAllProducts = async (req, res) => {
   try {
     const listOfProducts = await Product.find({});
@@ -131,4 +136,4 @@ const deleteProduct = async (req, res) => {
   }
 }
 
-module.exports = { addUrlProducts, createProduct, getAllProducts, editProduct, deleteProduct, imgUpload }
+module.exports = { addUrlProducts, addUrlProduct, createProduct, getAllProducts, editProduct, deleteProduct, imgUpload }

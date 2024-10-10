@@ -1,5 +1,5 @@
 const Product = require("../models/Products");
-const { addUrlProducts } = require("./products-controller");
+const { addUrlProducts, addUrlProduct } = require("./products-controller");
 
 const getFilteredProducts = async (req, res) => {
   try {
@@ -44,4 +44,24 @@ const getFilteredProducts = async (req, res) => {
   }
 }
 
-module.exports = { getFilteredProducts };
+const getProductDetails = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const product = await Product.findById(id);
+    const addedUrlProduct = addUrlProduct(product, req)
+    if (!product) throw new Error("Product Not Found");
+    return res.status(200).json({
+      success: true,
+      product: addedUrlProduct,
+      message: "Success Fetch Data"
+    })
+  } catch (error) {
+    console.log(error)
+    res.json({
+      success: false,
+      message: error?.message
+    })
+  }
+}
+
+module.exports = { getFilteredProducts, getProductDetails };
