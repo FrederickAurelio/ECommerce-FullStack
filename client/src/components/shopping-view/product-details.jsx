@@ -5,7 +5,12 @@ import { Dialog, DialogContent } from "../ui/dialog";
 import { Separator } from "../ui/separator";
 import { Input } from "../ui/input";
 
-function ProductDetailsDialog({ open, setOpen, productDetails }) {
+function ProductDetailsDialog({
+  open,
+  setOpen,
+  productDetails,
+  handleAddToCart,
+}) {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent className="grid max-w-[90vw] grid-cols-2 gap-8 sm:max-w-[80vw] sm:p-12 lg:max-w-[70vw]">
@@ -48,7 +53,15 @@ function ProductDetailsDialog({ open, setOpen, productDetails }) {
             <span className="text-muted-foreground">(4.5)</span>
           </div>
           <div className="my-5">
-            <Button className="w-full">Add to Cart</Button>
+            <Button
+              onClick={() => {
+                handleAddToCart(productDetails);
+                setOpen(false);
+              }}
+              className="w-full"
+            >
+              Add to Cart
+            </Button>
           </div>
           <Separator />
           <div className="max-h-[300px] overflow-auto">

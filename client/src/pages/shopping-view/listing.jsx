@@ -10,6 +10,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { sortOptions } from "@/config";
+import { useToast } from "@/hooks/use-toast";
+import { addToCart, getCartItems } from "@/store/cart-slice";
 import {
   getDetailedProducts,
   getFilteredProducts,
@@ -28,9 +30,25 @@ function ShoppiungListing() {
     productDetails,
     isLoading,
   } = useSelector((state) => state.shopProducts);
-
+  const { toast } = useToast();
+  const { user } = useSelector((state) => state.auth);
   function handleGetDetailsProduct(productId) {
     dispatch(getDetailedProducts(productId));
+  }
+
+  function handleAddToCart(getCurrentProduct) {
+    dispatch(
+      addToCart({
+        userId: user?.id,
+        productId: getCurrentProduct?._id,
+        quantity: 1,
+      }),
+    ).then((data) => {
+      if (data?.payload.success)
+        toast({
+          title: `${getCurrentProduct?.title} is added to the Cart`,
+        });
+    });
   }
 
   // fetch list of products
@@ -91,6 +109,7 @@ function ShoppiungListing() {
                 <ShoppingProductTile
                   handleGetDetailsProduct={handleGetDetailsProduct}
                   product={product}
+                  handleAddToCart={handleAddToCart}
                 />
               ))}
         </div>
@@ -99,6 +118,7 @@ function ShoppiungListing() {
         open={openDetailsDialog}
         setOpen={setOpenDetailsDialog}
         productDetails={productDetails}
+        handleAddToCart={handleAddToCart}
       />
     </div>
   );

@@ -25,14 +25,14 @@ function App() {
 
   useEffect(() => {
     dispatch(checkAuth());
-    
   }, []);
 
-  const { isAuthenticated, user, isLoading } = useSelector(
+  const { isAuthenticated, user, isLoading, init } = useSelector(
     (state) => state.auth,
   );
 
-  if (isLoading) return <Skeleton className="h-[600px] w-[800px] bg-black" />;
+  if (isLoading || init)
+    return <Skeleton className="h-[600px] w-[800px] bg-black" />;
 
   return (
     <div className="flex flex-col overflow-hidden bg-white">
