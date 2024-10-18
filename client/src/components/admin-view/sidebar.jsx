@@ -2,7 +2,6 @@ import { adminSidebarMenuItems } from "@/config";
 import { ChartNoAxesCombined } from "lucide-react";
 import { Fragment } from "react";
 import { Link, NavLink } from "react-router-dom";
-import { BadgeCheck, LayoutDashboard, ShoppingBasket } from "lucide-react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "../ui/sheet";
 
 function MenuItems({ setOpen }) {
@@ -17,9 +16,7 @@ function MenuItems({ setOpen }) {
             `${isActive ? "bg-muted text-foreground" : "text-muted-foreground"} flex cursor-pointer items-center gap-2 rounded-md px-3 py-2 text-xl hover:bg-muted hover:text-foreground`
           }
         >
-          {menuItem.id === "dashboard" && <LayoutDashboard />}
-          {menuItem.id === "products" && <ShoppingBasket />}
-          {menuItem.id === "orders" && <BadgeCheck />}
+          <menuItem.icon />
           <span>{menuItem.label}</span>
         </NavLink>
       ))}

@@ -8,6 +8,7 @@ const getFilteredProducts = async (req, res) => {
 
     const query = {};
     const sort = {};
+
     if (category.length > 0) query.category = { $in: category };
     if (brand.length > 0) query.brand = { $in: brand };
 

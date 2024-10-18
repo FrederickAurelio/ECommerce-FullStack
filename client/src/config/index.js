@@ -1,3 +1,5 @@
+import { BadgeCheck, LayoutDashboard, ShoppingBasket } from "lucide-react";
+
 export const registerFormControls = [
   {
     name: "userName",
@@ -44,16 +46,19 @@ export const adminSidebarMenuItems = [
     id: "dashboard",
     label: "Dashboard",
     path: "/admin/dashboard",
+    icon: LayoutDashboard,
   },
   {
     id: "products",
     label: "Products",
     path: "/admin/products",
+    icon: ShoppingBasket,
   },
   {
     id: "orders",
     label: "Orders",
     path: "/admin/orders",
+    icon: BadgeCheck,
   }
 ]
 
@@ -93,7 +98,7 @@ export const addProductFormElements = [
       { id: "puma", label: "Puma" },
       { id: "levi", label: "Levi's" },
       { id: "zara", label: "Zara" },
-      { id: "h&m", label: "H&M" },
+      { id: "hnm", label: "H&M" },
     ],
   },
   {
@@ -141,13 +146,13 @@ export const shoppingViewHeaderMenuItems = [
     path: "/shop/listing"
   },
   {
-    id: "footwear",
-    label: "Footwear",
+    id: "accessories",
+    label: "Accessories",
     path: "/shop/listing"
   },
   {
-    id: "accessories",
-    label: "Accessories",
+    id: "footwear",
+    label: "Footwear",
     path: "/shop/listing"
   },
 ]
@@ -166,7 +171,7 @@ export const filterOptions = {
     { id: "puma", label: "Puma" },
     { id: "levi", label: "Levi's" },
     { id: "zara", label: "Zara" },
-    { id: "h&m", label: "H&M" },
+    { id: "hnm", label: "H&M" },
   ]
 }
 

@@ -85,11 +85,13 @@ const authSlice = createSlice({
         state.isLoading = false;
         state.user = action.payload.user;
         state.isAuthenticated = action.payload.success;
+        state.init = false;
       })
       .addCase(checkAuth.rejected, (state, action) => {
         state.isLoading = false;
         state.user = null;
         state.isAuthenticated = false;
+        state.init = false;
       })
       .addCase(logoutUser.pending, (state) => {
         state.isLoading = true;

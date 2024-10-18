@@ -1,5 +1,10 @@
 import { HousePlug, LogOut, Menu, ShoppingCart, UserCog } from "lucide-react";
-import { Link, useNavigate } from "react-router-dom";
+import {
+  Link,
+  useLocation,
+  useNavigate,
+  useSearchParams,
+} from "react-router-dom";
 import { Sheet, SheetContent, SheetTrigger } from "../ui/sheet";
 import { Button } from "../ui/button";
 import { useDispatch, useSelector } from "react-redux";
@@ -18,18 +23,34 @@ import { toast } from "@/hooks/use-toast";
 import UserCartWrapper from "./cart-wrapper";
 import { useEffect, useState } from "react";
 import { getCartItems } from "@/store/cart-slice";
+import { useFilter } from "./UseFilter";
 
 function MenuItems() {
+  const navigate = useNavigate();
+  const { setCheckFilter } = useFilter();
+
   return (
     <nav className="mb-3 flex flex-col gap-6 lg:mb-0 lg:flex-row lg:items-center">
       {shoppingViewHeaderMenuItems.map((menuItem) => (
-        <Link
-          className="text-sm font-medium"
-          to={menuItem.path}
+        <div
+          className="cursor-pointer text-sm font-medium"
+          onClick={() => {
+            const filter = {
+              category: [menuItem.id],
+              brand: [],
+            };
+            if (menuItem.path === "/shop/home")
+              setCheckFilter({
+                category: [],
+                brand: [],
+              });
+            else setCheckFilter(filter);
+            navigate(`${menuItem.path}`);
+          }}
           key={menuItem.id}
         >
           {menuItem.label}
-        </Link>
+        </div>
       ))}
     </nav>
   );

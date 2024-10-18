@@ -1,12 +1,22 @@
+import { useNavigate } from "react-router-dom";
 import { Badge } from "../ui/badge";
 import { Button } from "../ui/button";
 import { Card, CardContent, CardFooter } from "../ui/card";
+import { useDispatch } from "react-redux";
+import { getDetailedProducts } from "@/store/shop-products-slice";
 
 function ShoppingProductTile({
-  handleGetDetailsProduct,
   product,
   handleAddToCart,
+  showOption = "none",
 }) {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  function handleGetDetailsProduct(productId) {
+    dispatch(getDetailedProducts(productId));
+  }
+
   return (
     <Card className="max-w-sn mx-auto w-full">
       <div onClick={() => handleGetDetailsProduct(product?._id)}>
@@ -47,12 +57,21 @@ function ShoppingProductTile({
         </CardContent>
       </div>
       <CardFooter>
-        <Button
-          onClick={() => handleAddToCart(product)}
-          className="w-full"
-        >
-          Add to Cart
-        </Button>
+        {showOption === "home" ? (
+          <Button
+            onClick={() => {
+              navigate("/shop/listing");
+              handleGetDetailsProduct(product?._id);
+            }}
+            className="w-full"
+          >
+            View more details
+          </Button>
+        ) : (
+          <Button onClick={() => handleAddToCart(product)} className="w-full">
+            Add to Cart
+          </Button>
+        )}
       </CardFooter>
     </Card>
   );

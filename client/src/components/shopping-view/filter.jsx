@@ -1,24 +1,12 @@
 import { filterOptions } from "@/config";
-import { Fragment, useEffect, useState } from "react";
+import { Fragment } from "react";
 import { Checkbox } from "../ui/checkbox";
 import { Label } from "../ui/label";
 import { Separator } from "../ui/separator";
-import { useSearchParams } from "react-router-dom";
+import { useFilter } from "./UseFilter";
 
 function ProductFilter() {
-  const [searchParams, setSearchParams] = useSearchParams();
-  const [checkFilter, setCheckFilter] = useState(
-    JSON.parse(searchParams.get("filter")) || {
-      category: [],
-      brand: [],
-    },
-  );
-
-  useEffect(() => {
-    searchParams.set("filter", JSON.stringify(checkFilter));
-    setSearchParams(searchParams);
-  }, [searchParams, checkFilter]);
-
+  const { checkFilter, setCheckFilter } = useFilter();
   const handleCheckboxChange = (keyItem, optionId) => {
     setCheckFilter((prevFilters) => {
       const isChecked = prevFilters[keyItem].includes(optionId);

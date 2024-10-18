@@ -32,9 +32,6 @@ function ShoppiungListing() {
   } = useSelector((state) => state.shopProducts);
   const { toast } = useToast();
   const { user } = useSelector((state) => state.auth);
-  function handleGetDetailsProduct(productId) {
-    dispatch(getDetailedProducts(productId));
-  }
 
   function handleAddToCart(getCurrentProduct) {
     dispatch(
@@ -107,7 +104,7 @@ function ShoppiungListing() {
             ? "Loading..."
             : productList?.map((product) => (
                 <ShoppingProductTile
-                  handleGetDetailsProduct={handleGetDetailsProduct}
+                  key={product?._id}
                   product={product}
                   handleAddToCart={handleAddToCart}
                 />
