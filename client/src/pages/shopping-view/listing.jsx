@@ -11,11 +11,8 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { sortOptions } from "@/config";
 import { useToast } from "@/hooks/use-toast";
-import { addToCart, getCartItems } from "@/store/cart-slice";
-import {
-  getDetailedProducts,
-  getFilteredProducts,
-} from "@/store/shop-products-slice";
+import { addToCart } from "@/store/cart-slice";
+import { getFilteredProducts } from "@/store/shop-products-slice";
 import { ArrowUpDownIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -69,7 +66,9 @@ function ShoppiungListing() {
         <div className="flex items-center justify-between border-b p-4">
           <h2 className="mr-2 text-lg font-extrabold">All Products</h2>
           <div className="flex items-center gap-3">
-            <span className="text-muted-foreground">10 Products</span>
+            <span className="text-muted-foreground">
+              {productList.length} Products
+            </span>
             <DropdownMenu>
               <DropdownMenuTrigger>
                 <Button

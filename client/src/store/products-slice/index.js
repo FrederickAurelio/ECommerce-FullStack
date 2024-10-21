@@ -82,9 +82,11 @@ const AdminProductsSlice = createSlice({
       })
       .addCase(deleteProduct.fulfilled, (state) => {
         state.isLoading = false;
+        state.productList = [];
       })
       .addCase(deleteProduct.rejected, (state) => {
         state.isLoading = false;
+        state.productList = [];
       })
   }
 })
