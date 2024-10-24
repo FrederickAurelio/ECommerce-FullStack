@@ -17,6 +17,7 @@ function CommonForm({
   buttonText,
   children,
   isLoading,
+  isBtnDisabled,
 }) {
   function renderInputByComponentType(getControlItem) {
     let element = null;
@@ -120,7 +121,7 @@ function CommonForm({
           </div>
         ))}
         <Button
-          disabled={isLoading}
+          disabled={isLoading || isBtnDisabled}
           type="submit"
           className="mt-2 w-full disabled:bg-muted-foreground"
         >

@@ -26,7 +26,7 @@ export const editAddress = createAsyncThunk("/address/editAddress", async ({ use
 })
 
 export const deleteAddress = createAsyncThunk("/address/deleteAddress", async ({ userId, addressId }) => {
-  const res = await axios.post(`http://localhost:5000/api/shop/address/delete/${userId}/${addressId}`, { withCredentials: true });
+  const res = await axios.delete(`http://localhost:5000/api/shop/address/delete/${userId}/${addressId}`, { withCredentials: true });
 
   return res.data;
 })
@@ -42,11 +42,9 @@ const addressSlice = createSlice({
       })
       .addCase(addNewAddress.fulfilled, (state, action) => {
         state.isLoading = false;
-        state.addressList = action.payload.address;
       })
       .addCase(addNewAddress.rejected, (state) => {
         state.isLoading = false;
-        state.addressList = [];
       })
       .addCase(getAllAdresses.pending, (state) => {
         state.isLoading = true;
@@ -64,22 +62,18 @@ const addressSlice = createSlice({
       })
       .addCase(editAddress.fulfilled, (state, action) => {
         state.isLoading = false;
-        state.addressList = action.payload.address;
       })
       .addCase(editAddress.rejected, (state) => {
         state.isLoading = false;
-        state.addressList = [];
       })
       .addCase(deleteAddress.pending, (state) => {
         state.isLoading = true;
       })
       .addCase(deleteAddress.fulfilled, (state) => {
         state.isLoading = false;
-        state.addressList = [];
       })
       .addCase(deleteAddress.rejected, (state) => {
         state.isLoading = false;
-        state.addressList = [];
       })
   }
 })
