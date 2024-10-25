@@ -73,9 +73,9 @@ const shoppingCartSlice = createSlice({
       .addCase(deleteCartItem.pending, (state) => {
         state.isLoading = true;
       })
-      .addCase(deleteCartItem.fulfilled, (state) => {
+      .addCase(deleteCartItem.fulfilled, (state, action) => {
         state.isLoading = false;
-        state.cartItems = [];
+        state.cartItems = action.payload.cart;
       })
       .addCase(deleteCartItem.rejected, (state) => {
         state.isLoading = false;

@@ -20,7 +20,7 @@ const initialAddressFormData = {
   notes: "",
 };
 
-function Address() {
+function Address({ setCurrentSelectedAddress }) {
   const [formData, setFormData] = useState(initialAddressFormData);
   const [currentEditedId, setCurrentEditedId] = useState(null);
   const dispatch = useDispatch();
@@ -113,6 +113,7 @@ function Address() {
         {addressList && addressList.length > 0
           ? addressList.map((singleAddress) => (
               <AddressCard
+                setCurrentSelectedAddress={setCurrentSelectedAddress}
                 handleDeleteAddress={handleDeleteAddress}
                 key={singleAddress._id}
                 addressInfo={singleAddress}

@@ -36,7 +36,7 @@ const getAllAddress = async (req, res) => {
     if (!userId)
       throw new Error("UserId is required");
 
-    const address = await Address.findOne({ userId });
+    const address = await Address.find({ userId });
     if (!address)
       throw new Error("Address Not Found");
 
@@ -64,7 +64,7 @@ const editAddress = async (req, res) => {
       throw new Error("userId and addressID is required");
 
     const address = await Address.findOneAndUpdate(
-      { id: addressId, userId },
+      { _id: addressId, userId },
       formData,
       { new: true }
     )
