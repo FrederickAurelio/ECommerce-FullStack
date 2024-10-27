@@ -7,9 +7,11 @@ function AddressCard({
   handleDeleteAddress,
   handleEditAddress,
   setCurrentSelectedAddress,
+  currentSelectedAddress,
 }) {
   return (
     <Card
+      className={`${currentSelectedAddress?._id === addressInfo?._id ? "border border-primary" : ""} cursor-pointer duration-100 hover:scale-105`}
       onClick={
         setCurrentSelectedAddress
           ? () => setCurrentSelectedAddress(addressInfo)

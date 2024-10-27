@@ -5,6 +5,8 @@ const initialState = {
   approvalURL: null,
   isLoading: false,
   orderId: null,
+  orderList: [],
+  orderDetails: null,
 }
 
 export const createNewOrder = createAsyncThunk("/order/createNewOrder", async (orderData) => {
@@ -15,7 +17,25 @@ export const createNewOrder = createAsyncThunk("/order/createNewOrder", async (o
 
 export const capturePayment = createAsyncThunk("/order/capturePayment", async ({ paymentId, payerId, orderId }) => {
   const res = await axios.post("http://localhost:5000/api/shop/order/capture", { paymentId, payerId, orderId }, { withCredentials: true });
-  console.log(res)
+
+  return res.data;
+})
+
+export const continuePayment = createAsyncThunk("/order/continuePayment", async (orderData) => {
+  const res = await axios.post("http://localhost:5000/api/shop/order/continue", orderData, { withCredentials: true });
+
+  return res.data;
+})
+
+export const getAllOrdersByUser = createAsyncThunk("/order/getAllOrdersByUser", async (userId) => {
+  const res = await axios.get(`http://localhost:5000/api/shop/order/list/${userId}`, { withCredentials: true });
+
+  return res.data;
+})
+
+export const getOrderDetails = createAsyncThunk("/order/getOrderDetails", async (id) => {
+  const res = await axios.get(`http://localhost:5000/api/shop/order/details/${id}`, { withCredentials: true });
+
   return res.data;
 })
 
@@ -39,6 +59,20 @@ const shoppingOrderSlice = createSlice({
         state.approvalURL = null;
         state.orderId = null;
       })
+      .addCase(continuePayment.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(continuePayment.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.approvalURL = action.payload.approvalURL;
+        state.orderId = action.payload.orderId;
+        sessionStorage.setItem("currentOrderId", JSON.stringify(action.payload.orderId))
+      })
+      .addCase(continuePayment.rejected, (state) => {
+        state.isLoading = false;
+        state.approvalURL = null;
+        state.orderId = null;
+      })
       .addCase(capturePayment.pending, (state) => {
         state.isLoading = true;
       })
@@ -49,6 +83,28 @@ const shoppingOrderSlice = createSlice({
       })
       .addCase(capturePayment.rejected, (state) => {
         state.isLoading = false;
+      })
+      .addCase(getAllOrdersByUser.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(getAllOrdersByUser.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.orderList = action.payload.orders;
+      })
+      .addCase(getAllOrdersByUser.rejected, (state) => {
+        state.isLoading = false;
+        state.orderList = [];
+      })
+      .addCase(getOrderDetails.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(getOrderDetails.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.orderDetails = action.payload.order;
+      })
+      .addCase(getOrderDetails.rejected, (state) => {
+        state.isLoading = false;
+        state.orderDetails = null;
       })
   }
 })

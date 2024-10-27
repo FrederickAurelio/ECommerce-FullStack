@@ -2,6 +2,7 @@ import img from "@/assets/account.jpg";
 import Address from "@/components/shopping-view/address";
 import UserCartItemsContent from "@/components/shopping-view/cart-items-content";
 import { Button } from "@/components/ui/button";
+import { toast } from "@/hooks/use-toast";
 import { createNewOrder } from "@/store/order-slice";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -9,7 +10,7 @@ import { useDispatch, useSelector } from "react-redux";
 function ShoppingCheckout() {
   const { cartItems } = useSelector((state) => state.cartProductReducer);
   const { user } = useSelector((state) => state.auth);
-  const { approvalURL } = useSelector((state) => state.shopOrder);
+  const { approvalURL, isLoading } = useSelector((state) => state.shopOrder);
   const [currentSelectedAddress, setCurrentSelectedAddress] = useState(null);
   const [isPaymentStart, setIsPaymentStart] = useState(false);
   const dispatch = useDispatch();
@@ -20,6 +21,22 @@ function ShoppingCheckout() {
   );
 
   function handleInitiatePaypalPayment() {
+    if (!currentSelectedAddress) {
+      toast({
+        title: "Please select one address to proceed",
+        variant: "destructive",
+      });
+      return null;
+    }
+
+    if (cart.length === 0) {
+      toast({
+        title: "Your cart is empty. Please add items to proceed",
+        variant: "destructive",
+      });
+      return null;
+    }
+
     const orderData = {
       userId: user?.id,
       cartId: cartItems?._id,
@@ -48,7 +65,6 @@ function ShoppingCheckout() {
       payerId: "",
     };
     dispatch(createNewOrder(orderData)).then((data) => {
-      console.log(data);
       if (data?.payload?.success) {
         setIsPaymentStart(true);
       } else {
@@ -69,7 +85,10 @@ function ShoppingCheckout() {
         <img src={img} className="h-full w-full object-cover object-center" />
       </div>
       <div className="mt-5 grid grid-cols-1 gap-3 p-5 sm:grid-cols-2">
-        <Address setCurrentSelectedAddress={setCurrentSelectedAddress} />
+        <Address
+          currentSelectedAddress={currentSelectedAddress}
+          setCurrentSelectedAddress={setCurrentSelectedAddress}
+        />
         <div className="flex flex-col gap-4">
           {cartItems && cart && cart.length > 0
             ? cart.map((cartItem) => (
@@ -86,7 +105,11 @@ function ShoppingCheckout() {
             </div>
           </div>
           <div className="mt-4 w-full">
-            <Button onClick={handleInitiatePaypalPayment} className="w-full">
+            <Button
+              disabled={isLoading || approvalURL}
+              onClick={handleInitiatePaypalPayment}
+              className="w-full disabled:cursor-not-allowed"
+            >
               Checkout with Paypal
             </Button>
           </div>

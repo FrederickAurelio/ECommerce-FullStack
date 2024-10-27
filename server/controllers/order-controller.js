@@ -3,38 +3,42 @@ const paypal = require("../helpers/paypal");
 const Cart = require("../models/Cart");
 const Order = require("../models/Order");
 
+function createPaymentJson(req) {
+  return {
+    intent: "sale",
+    payer: {
+      payment_method: "paypal"
+    },
+    redirect_urls: {
+      return_url: "http://localhost:3000/shop/paypal-return",
+      cancel_url: "http://localhost:3000/shop/cancel",
+    },
+    transactions: [
+      {
+        item_list: {
+          items: req.body.cartItems.map(item => ({
+            name: item.title,
+            sku: item.productId,
+            price: item.price,
+            currency: "USD",
+            quantity: item.quantity,
+          }))
+        },
+        amount: {
+          currency: "USD",
+          total: req.body.totalAmount.toFixed(2)
+        },
+        description: "description"
+      }
+    ]
+  };
+}
+
 const createOrder = async (req, res) => {
   try {
     const { userId, cartItems, addressInfo, orderStatus, paymentMethod, paymentStatus, totalAmount, orderDate, orderUpdateDate, paymentId, payerId, cartId } = req.body;
 
-    const create_payment_json = {
-      intent: "sale",
-      payer: {
-        payment_method: "paypal"
-      },
-      redirect_urls: {
-        return_url: "http://localhost:3000/shop/paypal-return",
-        cancel_url: "http://localhost:3000/shop/cancel",
-      },
-      transactions: [
-        {
-          item_list: {
-            items: cartItems.map(item => ({
-              name: item.title,
-              sku: item.productId,
-              price: item.price.toFixed(2),
-              currency: "USD",
-              quantity: item.quantity,
-            }))
-          },
-          amount: {
-            currency: "USD",
-            total: totalAmount.toFixed(2)
-          },
-          description: "description"
-        }
-      ]
-    };
+    const create_payment_json = createPaymentJson(req);
 
     paypal.payment.create(create_payment_json, async (error, paymentInfo) => {
       if (error) {
@@ -49,6 +53,8 @@ const createOrder = async (req, res) => {
         })
 
         await newlyCreatedOrder.save();
+        await Cart.findByIdAndDelete(cartId);
+
         const approvalURL = paymentInfo.links.find(link => link.rel === "approval_url").href;
         res.status(201).json({
           success: true,
@@ -60,6 +66,35 @@ const createOrder = async (req, res) => {
 
   } catch (error) {
     console.log(error);
+    res.json({
+      success: false,
+      message: error.message,
+    })
+  }
+}
+
+const continuePayment = async (req, res) => {
+  try {
+    const create_payment_json = createPaymentJson(req);
+    paypal.payment.create(create_payment_json, async (error, paymentInfo) => {
+      if (error) {
+        console.error("PayPal Validation Error:", error.response);
+        console.error("Error Details:", JSON.stringify(error.response.details, null, 2));
+        throw new Error(`Error while creating PayPal payment: ${error.response.message}`);
+      }
+
+      else {
+        const approvalURL = paymentInfo.links.find(link => link.rel === "approval_url").href;
+        res.status(201).json({
+          success: true,
+          approvalURL,
+          orderId: req.body._id,
+        })
+      }
+    })
+
+  } catch (error) {
+    console.log(error)
     res.json({
       success: false,
       message: error.message,
@@ -81,9 +116,6 @@ const capturePayment = async (req, res) => {
     order.paymentId = paymentId;
     order.payerId = payerId;
 
-    const getCartId = order.cartId;
-
-    await Cart.findByIdAndDelete(getCartId);
     await order.save();
 
     res.status(200).json({
@@ -101,4 +133,48 @@ const capturePayment = async (req, res) => {
   }
 }
 
-module.exports = { createOrder, capturePayment };
+const getAllOrdersByUser = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const orders = await Order.find({ userId });
+    if (!orders.length)
+      throw new Error("No orders found!");
+
+    res.status(200).json({
+      success: true,
+      orders: orders,
+      message: "successful fetch orders"
+    })
+
+  } catch (error) {
+    console.log(error);
+    res.json({
+      success: false,
+      message: error.message,
+    })
+  }
+}
+
+const getOrderDetails = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const order = await Order.findById(id);
+    if (!order)
+      throw new Error("Order not found!");
+
+    res.status(200).json({
+      success: true,
+      order: order,
+      message: "successful fetch order"
+    })
+
+  } catch (error) {
+    console.log(error);
+    res.json({
+      success: false,
+      message: error.message,
+    })
+  }
+}
+
+module.exports = { createOrder, continuePayment, capturePayment, getAllOrdersByUser, getOrderDetails };
