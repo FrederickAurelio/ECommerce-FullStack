@@ -5,6 +5,7 @@ import shopProductsReducer from "./shop-products-slice";
 import cartProductReducer from "./cart-slice";
 import shopAddressReducer from "./address-slice";
 import shopOrderReducer from "./order-slice";
+import adminOrderReducer from "./admin-order-slice";
 
 const store = configureStore({
   reducer: {
@@ -14,6 +15,7 @@ const store = configureStore({
     cartProductReducer: cartProductReducer,
     shopAddress: shopAddressReducer,
     shopOrder: shopOrderReducer,
+    adminOrder: adminOrderReducer,
   }
 })
 

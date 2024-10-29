@@ -126,4 +126,26 @@ const authMiddleware = async (req, res, next) => {
   }
 }
 
-module.exports = { registerUser, loginUser, logoutUser, authMiddleware };
+const getUserById = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const user = await User.findById(userId);
+    if (!user)
+      throw new Error("User Not Found!");
+
+    res.status(200).json({
+      success: true,
+      user,
+      message: "Fetch User successful"
+    })
+
+  } catch (error) {
+    console.log(error);
+    res.json({
+      success: false,
+      message: error.message,
+    })
+  }
+}
+
+module.exports = { registerUser, loginUser, logoutUser, authMiddleware, getUserById };

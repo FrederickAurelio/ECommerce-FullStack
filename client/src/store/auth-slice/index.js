@@ -6,7 +6,16 @@ const initialState = {
   isLoading: false,
   user: null,
   init: true,
+  searchedUser: null,
+  searchLoading: false,
 }
+
+export const getUserById = createAsyncThunk("/auth/getUserById",
+  async (userId) => {
+    const response = await axios.get(`http://localhost:5000/api/auth/getUserById/${userId}`,
+      { withCredentials: true, })
+    return response.data;
+  })
 
 export const registerUser = createAsyncThunk("/auth/register",
   async (formData) => {
@@ -103,6 +112,17 @@ const authSlice = createSlice({
       })
       .addCase(logoutUser.rejected, (state) => {
         state.isLoading = false;
+      })
+      .addCase(getUserById.fulfilled, (state, action) => {
+        state.searchedUser = action.payload.user;
+        state.searchLoading = false;
+      })
+      .addCase(getUserById.rejected, (state) => {
+        state.searchedUser = null;
+        state.searchLoading = false;
+      })
+      .addCase(getUserById.pending, (state) => {
+        state.searchLoading = true;
       })
   }
 });

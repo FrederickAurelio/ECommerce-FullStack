@@ -58,7 +58,13 @@ function ShoppingOrders() {
                 </TableCell>
                 <TableCell>
                   <Badge
-                    className={`font-semibold capitalize ${order.orderStatus === "confirmed" ? "bg-emerald-500" : ""}`}
+                    className={`font-semibold capitalize ${
+                      order.orderStatus === "confirmed"
+                        ? "bg-emerald-500"
+                        : order.orderStatus === "rejected"
+                          ? "bg-rose-500"
+                          : ""
+                    }`}
                   >
                     {order.orderStatus}
                   </Badge>

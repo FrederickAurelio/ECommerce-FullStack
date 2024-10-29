@@ -45,9 +45,7 @@ const createOrder = async (req, res) => {
         console.error("PayPal Validation Error:", error.response);
         console.error("Error Details:", JSON.stringify(error.response.details, null, 2));
         throw new Error(`Error while creating PayPal payment: ${error.response.message}`);
-      }
-
-      else {
+      } else {
         const newlyCreatedOrder = new Order({
           userId, cartId, cartItems, addressInfo, orderStatus, paymentMethod, paymentStatus, totalAmount, orderDate, orderUpdateDate, paymentId, payerId
         })
@@ -81,9 +79,7 @@ const continuePayment = async (req, res) => {
         console.error("PayPal Validation Error:", error.response);
         console.error("Error Details:", JSON.stringify(error.response.details, null, 2));
         throw new Error(`Error while creating PayPal payment: ${error.response.message}`);
-      }
-
-      else {
+      } else {
         const approvalURL = paymentInfo.links.find(link => link.rel === "approval_url").href;
         res.status(201).json({
           success: true,

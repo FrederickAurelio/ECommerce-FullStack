@@ -73,7 +73,13 @@ function ShoppingOrderDetailsView({ isLoading, orderDetails }) {
               <Label className="capitalize">
                 {" "}
                 <Badge
-                  className={`font-semibold capitalize ${orderDetails?.orderStatus === "confirmed" ? "bg-emerald-500" : ""}`}
+                  className={`font-semibold capitalize ${
+                    orderDetails?.orderStatus === "confirmed"
+                      ? "bg-emerald-500"
+                      : orderDetails?.orderStatus === "rejected"
+                        ? "bg-rose-500"
+                        : ""
+                  }`}
                 >
                   {orderDetails?.orderStatus}
                 </Badge>
