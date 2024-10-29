@@ -2,6 +2,7 @@
 const paypal = require("../helpers/paypal");
 const Cart = require("../models/Cart");
 const Order = require("../models/Order");
+const Products = require("../models/Products");
 
 function createPaymentJson(req) {
   return {
@@ -64,9 +65,9 @@ const createOrder = async (req, res) => {
 
   } catch (error) {
     console.log(error);
-    res.json({
+    res.status(500).json({
       success: false,
-      message: error.message,
+      message: error.message
     })
   }
 }
@@ -91,9 +92,9 @@ const continuePayment = async (req, res) => {
 
   } catch (error) {
     console.log(error)
-    res.json({
+    res.status(500).json({
       success: false,
-      message: error.message,
+      message: error.message
     })
   }
 }
@@ -112,6 +113,21 @@ const capturePayment = async (req, res) => {
     order.paymentId = paymentId;
     order.payerId = payerId;
 
+    const getProductIds = order.cartItems.map(item => item.productId);
+    const products = await Products.find({ "_id": { $in: getProductIds } });
+
+    const foundProductIds = products.map(product => product._id.toString());
+    const missingProductIds = getProductIds.filter(id => !foundProductIds.includes(id.toString()));
+
+    if (missingProductIds.length > 0)
+      throw new Error("Some products is missing: " + missingProductIds.join(", "))
+
+    products.forEach(product =>
+      product.totalStock -= order.cartItems.find(item => item.productId === product._id.toString()).quantity
+    );
+
+    await Promise.all(products.map(product => product.save()));
+
     await order.save();
 
     res.status(200).json({
@@ -122,9 +138,9 @@ const capturePayment = async (req, res) => {
 
   } catch (error) {
     console.log(error);
-    res.json({
+    res.status(500).json({
       success: false,
-      message: error.message,
+      message: error.message
     })
   }
 }
@@ -144,9 +160,9 @@ const getAllOrdersByUser = async (req, res) => {
 
   } catch (error) {
     console.log(error);
-    res.json({
+    res.status(500).json({
       success: false,
-      message: error.message,
+      message: error.message
     })
   }
 }
@@ -166,9 +182,9 @@ const getOrderDetails = async (req, res) => {
 
   } catch (error) {
     console.log(error);
-    res.json({
+    res.status(500).json({
       success: false,
-      message: error.message,
+      message: error.message
     })
   }
 }

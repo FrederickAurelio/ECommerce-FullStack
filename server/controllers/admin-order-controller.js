@@ -14,9 +14,9 @@ const getAllOrdersOfAllUsers = async (req, res) => {
 
   } catch (error) {
     console.log(error);
-    res.json({
+    res.status(500).json({
       success: false,
-      message: error.message,
+      message: error.message
     })
   }
 }
@@ -36,9 +36,9 @@ const getOrderDetailsForAdmin = async (req, res) => {
 
   } catch (error) {
     console.log(error);
-    res.json({
+    res.status(500).json({
       success: false,
-      message: error.message,
+      message: error.message
     })
   }
 }
@@ -67,9 +67,9 @@ const updateOrderStatus = async (req, res) => {
 
   } catch (error) {
     console.log(error);
-    res.json({
+    res.status(500).json({
       success: false,
-      message: error.message,
+      message: error.message
     })
   }
 }

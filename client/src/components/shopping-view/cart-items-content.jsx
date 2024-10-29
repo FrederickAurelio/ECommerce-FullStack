@@ -29,9 +29,15 @@ function UserCartItemsContent({ cartItem }) {
             : cartItem?.quantity - 1,
       }),
     ).then((data) => {
+      console.log(data)
       if (data?.payload?.success)
         toast({
           title: "Cart item is updated success",
+        });
+      else
+        toast({
+          title: data?.payload?.message,
+          variant: "destructive",
         });
     });
   }

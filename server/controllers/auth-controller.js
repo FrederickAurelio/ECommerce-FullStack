@@ -24,7 +24,7 @@ const registerUser = async (req, res) => {
     })
   } catch (error) {
     console.log(error)
-    res.send({
+    res.status(500).json({
       success: false,
       message: error.message
     })
@@ -39,7 +39,7 @@ const loginUser = async (req, res) => {
     // Find user by email
     const checkUser = await User.findOne({ email });
     if (!checkUser) {
-      return res.json({
+      return res.status(404).json({
         success: false,
         message: "User does not exist. Please register first."
       });
@@ -48,7 +48,7 @@ const loginUser = async (req, res) => {
     // Check if password matches
     const checkPasswordMatch = await bcrypt.compare(password, checkUser.password);
     if (!checkPasswordMatch) {
-      return res.json({
+      return res.status(404).json({
         success: false,
         message: "Invalid credentials"
       });
@@ -83,10 +83,10 @@ const loginUser = async (req, res) => {
 
   } catch (error) {
     console.log(error);
-    res.send({
+    res.status(500).json({
       success: false,
       message: error.message
-    });
+    })
   }
 };
 
@@ -108,9 +108,9 @@ const logoutUser = (req, res) => {
 // auth middleware
 const authMiddleware = async (req, res, next) => {
   const token = req.cookies.token;
-  if (!token) return res.json({
+  if (!token) return res.status(500).json({
     success: false,
-    message: "Unauthorized user!"
+    message: "Unauthorized user"
   })
 
   try {
@@ -119,9 +119,9 @@ const authMiddleware = async (req, res, next) => {
     req.user = decoded;
     next();
   } catch (error) {
-    res.json({
+    res.status(500).json({
       success: false,
-      message: "Unauthorized user! Please back login"
+      message: error.message
     })
   }
 }
@@ -141,9 +141,9 @@ const getUserById = async (req, res) => {
 
   } catch (error) {
     console.log(error);
-    res.json({
+    res.status(500).json({
       success: false,
-      message: error.message,
+      message: error.message
     })
   }
 }

@@ -11,42 +11,77 @@ const initialState = {
 }
 
 export const getUserById = createAsyncThunk("/auth/getUserById",
-  async (userId) => {
-    const response = await axios.get(`http://localhost:5000/api/auth/getUserById/${userId}`,
-      { withCredentials: true, })
-    return response.data;
+  async (userId, { rejectWithValue }) => {
+    try {
+      const response = await axios.get(`http://localhost:5000/api/auth/getUserById/${userId}`,
+        { withCredentials: true, })
+      return response.data;
+    } catch (error) {
+      return rejectWithValue({
+        success: false,
+        message: error.response?.data?.message || "An error occurred",
+      });
+    }
   })
 
 export const registerUser = createAsyncThunk("/auth/register",
-  async (formData) => {
-    const response = await axios.post("http://localhost:5000/api/auth/register",
-      formData, { withCredentials: true, })
-    return response.data;
+  async (formData, { rejectWithValue }) => {
+    try {
+      const response = await axios.post("http://localhost:5000/api/auth/register",
+        formData, { withCredentials: true, })
+      return response.data;
+    } catch (error) {
+      return rejectWithValue({
+        success: false,
+        message: error.response?.data?.message || "An error occurred",
+      });
+    }
   })
 
 export const loginUser = createAsyncThunk("/auth/login",
-  async (formData) => {
-    const response = await axios.post("http://localhost:5000/api/auth/login",
-      formData, { withCredentials: true, })
-    return response.data;
+  async (formData, { rejectWithValue }) => {
+    try {
+      const response = await axios.post("http://localhost:5000/api/auth/login",
+        formData, { withCredentials: true, })
+      return response.data;
+    } catch (error) {
+      return rejectWithValue({
+        success: false,
+        message: error.response?.data?.message || "An error occurred",
+      });
+    }
   })
 
 export const logoutUser = createAsyncThunk("/auth/logout",
-  async () => {
-    const response = await axios.post("http://localhost:5000/api/auth/logout", {}, {
-      withCredentials: true // Ensure cookies are included in the request
-    });
-    return response.data;
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await axios.post("http://localhost:5000/api/auth/logout", {}, {
+        withCredentials: true // Ensure cookies are included in the request
+      });
+      return response.data; s
+    } catch (error) {
+      return rejectWithValue({
+        success: false,
+        message: error.response?.data?.message || "An error occurred",
+      });
+    }
   })
 
 export const checkAuth = createAsyncThunk("/auth/checkauth",
-  async () => {
-    const response = await axios.get("http://localhost:5000/api/auth/check-auth", {
-      withCredentials: true, headers: {
-        "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",
-      }
-    })
-    return response.data;
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await axios.get("http://localhost:5000/api/auth/check-auth", {
+        withCredentials: true, headers: {
+          "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",
+        }
+      })
+      return response.data;
+    } catch (error) {
+      return rejectWithValue({
+        success: false,
+        message: error.response?.data?.message || "An error occurred",
+      });
+    }
   })
 
 
@@ -63,15 +98,13 @@ const authSlice = createSlice({
       .addCase(registerUser.pending, (state) => {
         state.isLoading = true;
       })
-      .addCase(registerUser.fulfilled, (state, action) => {
+      .addCase(registerUser.fulfilled, (state) => {
         state.isLoading = false;
         state.user = null;
         state.isAuthenticated = false;
       })
-      .addCase(registerUser.rejected, (state, action) => {
+      .addCase(registerUser.rejected, (state) => {
         state.isLoading = false;
-        state.user = null;
-        state.isAuthenticated = false;
       })
       .addCase(loginUser.pending, (state) => {
         state.isLoading = true;
@@ -81,10 +114,8 @@ const authSlice = createSlice({
         state.isAuthenticated = action.payload.success;
         state.user = action.payload.user;
       })
-      .addCase(loginUser.rejected, (state, action) => {
+      .addCase(loginUser.rejected, (state) => {
         state.isLoading = false;
-        state.user = null;
-        state.isAuthenticated = false;
       })
       .addCase(checkAuth.pending, (state) => {
         state.isLoading = true;
@@ -96,11 +127,8 @@ const authSlice = createSlice({
         state.isAuthenticated = action.payload.success;
         state.init = false;
       })
-      .addCase(checkAuth.rejected, (state, action) => {
+      .addCase(checkAuth.rejected, (state) => {
         state.isLoading = false;
-        state.user = null;
-        state.isAuthenticated = false;
-        state.init = false;
       })
       .addCase(logoutUser.pending, (state) => {
         state.isLoading = true;
@@ -118,7 +146,6 @@ const authSlice = createSlice({
         state.searchLoading = false;
       })
       .addCase(getUserById.rejected, (state) => {
-        state.searchedUser = null;
         state.searchLoading = false;
       })
       .addCase(getUserById.pending, (state) => {

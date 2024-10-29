@@ -7,39 +7,67 @@ const initialState = {
   productList: []
 }
 
-export const createNewProduct = createAsyncThunk("/adminProducts/createproduct", async (formData) => {
-  const response = await axios.post(
-    "http://localhost:5000/api/admin/products/create", formData, {
-    headers: {
-      "Content-Type": "multipart/form-data",
-    },
-    withCredentials: true,
-  })
-  return response?.data;
+export const createNewProduct = createAsyncThunk("/adminProducts/createproduct", async (formData, { rejectWithValue }) => {
+  try {
+    const response = await axios.post(
+      "http://localhost:5000/api/admin/products/create", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+      withCredentials: true,
+    })
+    return response?.data;
+  } catch (error) {
+    return rejectWithValue({
+      success: false,
+      message: error.response?.data?.message || "An error occurred",
+    });
+  }
 })
 
-export const getAllProducts = createAsyncThunk("/adminProducts/getAllProducts", async () => {
-  const response = await axios.get("http://localhost:5000/api/admin/products/get");
-  return response.data;
+export const getAllProducts = createAsyncThunk("/adminProducts/getAllProducts", async (_, { rejectWithValue }) => {
+  try {
+    const response = await axios.get("http://localhost:5000/api/admin/products/get");
+    return response.data;
+  } catch (error) {
+    return rejectWithValue({
+      success: false,
+      message: error.response?.data?.message || "An error occurred",
+    });
+  }
 })
 
-export const editProduct = createAsyncThunk("/adminProducts/editProduct", async ({ id, formData }) => {
-  const response = await axios.put(
-    `http://localhost:5000/api/admin/products/edit/${id}`, formData, {
-    headers: {
-      "Content-Type": "multipart/form-data",
-    },
-    withCredentials: true,
-  })
-  return response?.data;
+export const editProduct = createAsyncThunk("/adminProducts/editProduct", async ({ id, formData }, { rejectWithValue }) => {
+  try {
+    const response = await axios.put(
+      `http://localhost:5000/api/admin/products/edit/${id}`, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+      withCredentials: true,
+    })
+    return response?.data;
+  } catch (error) {
+    return rejectWithValue({
+      success: false,
+      message: error.response?.data?.message || "An error occurred",
+    });
+  }
 })
 
-export const deleteProduct = createAsyncThunk("/adminProducts/deleteProduct", async (id) => {
-  const response = await axios.delete(
-    `http://localhost:5000/api/admin/products/delete/${id}`, {
-    withCredentials: true,
-  })
-  return response?.data;
+export const deleteProduct = createAsyncThunk("/adminProducts/deleteProduct", async (id, { rejectWithValue }) => {
+  try {
+    const response = await axios.delete(
+      `http://localhost:5000/api/admin/products/delete/${id}`, {
+      withCredentials: true,
+    })
+    return response?.data;
+  } catch (error) {
+    return rejectWithValue({
+      success: false,
+      message: error.response?.data?.message || "An error occurred",
+    });
+  }
 })
 
 const AdminProductsSlice = createSlice({
@@ -57,7 +85,6 @@ const AdminProductsSlice = createSlice({
       })
       .addCase(getAllProducts.rejected, (state) => {
         state.isLoading = false;
-        state.productList = [];
       })
       .addCase(createNewProduct.pending, (state) => {
         state.isLoading = true;
@@ -86,7 +113,6 @@ const AdminProductsSlice = createSlice({
       })
       .addCase(deleteProduct.rejected, (state) => {
         state.isLoading = false;
-        state.productList = [];
       })
   }
 })

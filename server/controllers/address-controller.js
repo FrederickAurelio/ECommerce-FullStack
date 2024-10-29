@@ -23,7 +23,7 @@ const addAddress = async (req, res) => {
     })
   } catch (error) {
     console.log(error);
-    res.json({
+    res.status(500).json({
       success: false,
       message: error.message
     })
@@ -48,7 +48,7 @@ const getAllAddress = async (req, res) => {
 
   } catch (error) {
     console.log(error);
-    res.json({
+    res.status(500).json({
       success: false,
       message: error.message
     })
@@ -78,7 +78,7 @@ const editAddress = async (req, res) => {
     })
   } catch (error) {
     console.log(error);
-    res.json({
+    res.status(500).json({
       success: false,
       message: error.message
     })
@@ -104,7 +104,7 @@ const deleteAddress = async (req, res) => {
     })
   } catch (error) {
     console.log(error);
-    res.json({
+    res.status(500).json({
       success: false,
       message: error.message
     })

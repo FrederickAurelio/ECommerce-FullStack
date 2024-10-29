@@ -38,10 +38,15 @@ function ShoppiungListing() {
         quantity: 1,
       }),
     ).then((data) => {
-      if (data?.payload.success)
+      if (data?.payload.success) {
         toast({
           title: `${getCurrentProduct?.title} is added to the Cart`,
         });
+      } else
+      toast({
+        title: data?.payload?.message,
+        variant: "destructive",
+      });
     });
   }
 

@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { Badge } from "../ui/badge";
 import { Button } from "../ui/button";
 import { Card, CardContent, CardFooter } from "../ui/card";
@@ -12,13 +12,17 @@ function ShoppingProductTile({
 }) {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const location = useLocation();
 
   function handleGetDetailsProduct(productId) {
-    dispatch(getDetailedProducts(productId));
+    if (location.pathname === "/shop/listing")
+      dispatch(getDetailedProducts(productId));
   }
 
   return (
-    <Card className="max-w-sn mx-auto w-full">
+    <Card
+      className={`max-w-sn mx-auto w-full ${product?.totalStock === 0 ? "cursor-not-allowed opacity-60" : ""}`}
+    >
       <div onClick={() => handleGetDetailsProduct(product?._id)}>
         <div className="relative">
           <img
@@ -26,8 +30,16 @@ function ShoppingProductTile({
             src={product?.imageUrl}
             alt={product?.title}
           />
-          {product?.salePrice > 0 ? (
+          {product?.totalStock === 0 ? (
             <Badge className="absolute left-2 top-2 bg-red-500 hover:bg-red-600">
+              Out of stocks
+            </Badge>
+          ) : product?.totalStock < 10 ? (
+            <Badge className="absolute left-2 top-2 bg-orange-500 hover:bg-red-600">
+              Only {product?.totalStock} items left
+            </Badge>
+          ) : product?.salePrice > 0 ? (
+            <Badge className="absolute left-2 top-2 bg-rose-500 hover:bg-red-600">
               Sale
             </Badge>
           ) : null}
@@ -57,19 +69,25 @@ function ShoppingProductTile({
         </CardContent>
       </div>
       <CardFooter>
-        {showOption === "home" ? (
-          <Button
-            onClick={() => {
-              navigate("/shop/listing");
-              handleGetDetailsProduct(product?._id);
-            }}
-            className="w-full"
-          >
-            View more details
-          </Button>
+        {product?.totalStock !== 0 ? (
+          showOption === "home" ? (
+            <Button
+              onClick={() => {
+                navigate("/shop/listing");
+                handleGetDetailsProduct(product?._id);
+              }}
+              className="w-full"
+            >
+              View more details
+            </Button>
+          ) : (
+            <Button onClick={() => handleAddToCart(product)} className="w-full">
+              Add to Cart
+            </Button>
+          )
         ) : (
-          <Button onClick={() => handleAddToCart(product)} className="w-full">
-            Add to Cart
+          <Button disabled={true} className="w-full bg-muted-foreground">
+            Out of Stocks
           </Button>
         )}
       </CardFooter>

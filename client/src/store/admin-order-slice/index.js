@@ -8,22 +8,43 @@ const initialState = {
 };
 
 
-export const getAllOrdersForAdmin = createAsyncThunk("/order/getAllOrdersForAdmin", async () => {
-  const res = await axios.get(`http://localhost:5000/api/admin/order/get`, { withCredentials: true });
+export const getAllOrdersForAdmin = createAsyncThunk("/order/getAllOrdersForAdmin", async (_, { rejectWithValue }) => {
+  try {
+    const res = await axios.get(`http://localhost:5000/api/admin/order/get`, { withCredentials: true });
 
-  return res.data;
+    return res.data;
+  } catch (error) {
+    return rejectWithValue({
+      success: false,
+      message: error.response?.data?.message || "An error occurred",
+    });
+  }
 })
 
-export const getOrderDetailsForAdmin = createAsyncThunk("/order/getOrderDetailsForAdmin", async (id) => {
-  const res = await axios.get(`http://localhost:5000/api/admin/order/details/${id}`, { withCredentials: true });
+export const getOrderDetailsForAdmin = createAsyncThunk("/order/getOrderDetailsForAdmin", async (id, { rejectWithValue }) => {
+  try {
+    const res = await axios.get(`http://localhost:5000/api/admin/order/details/${id}`, { withCredentials: true });
 
-  return res.data;
+    return res.data;
+  } catch (error) {
+    return rejectWithValue({
+      success: false,
+      message: error.response?.data?.message || "An error occurred",
+    });
+  }
 })
 
-export const updateOrderStatus = createAsyncThunk("/order/updateOrderStatus", async ({ id, orderStatus }) => {
-  const res = await axios.put(`http://localhost:5000/api/admin/order/update/${id}`, { orderStatus }, { withCredentials: true });
+export const updateOrderStatus = createAsyncThunk("/order/updateOrderStatus", async ({ id, orderStatus }, { rejectWithValue }) => {
+  try {
+    const res = await axios.put(`http://localhost:5000/api/admin/order/update/${id}`, { orderStatus }, { withCredentials: true });
 
-  return res.data;
+    return res.data;
+  } catch (error) {
+    return rejectWithValue({
+      success: false,
+      message: error.response?.data?.message || "An error occurred",
+    });
+  }
 })
 
 const adminOrderSlice = createSlice({
@@ -41,7 +62,6 @@ const adminOrderSlice = createSlice({
       })
       .addCase(getAllOrdersForAdmin.rejected, (state) => {
         state.isLoading = false;
-        state.orderList = [];
       })
       .addCase(getOrderDetailsForAdmin.pending, (state) => {
         state.isLoading = true;
@@ -52,7 +72,6 @@ const adminOrderSlice = createSlice({
       })
       .addCase(getOrderDetailsForAdmin.rejected, (state) => {
         state.isLoading = false;
-        state.orderDetails = null;
       })
       .addCase(updateOrderStatus.pending, (state) => {
         state.isLoading = true;

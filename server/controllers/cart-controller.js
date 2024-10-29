@@ -20,6 +20,10 @@ const addToCart = async (req, res) => {
     if (!findCurrentProduct) {
       cart.items.push({ productId, quantity })
     } else {
+      const product = await Product.findById(productId);
+      if (product.totalStock < findCurrentProduct.quantity + 1)
+        throw new Error(`Product Stock is not enough!`)
+
       findCurrentProduct.quantity += quantity;
     }
 
@@ -48,7 +52,7 @@ const addToCart = async (req, res) => {
     })
   } catch (error) {
     console.log(error);
-    res.json({
+    res.status(500).json({
       success: false,
       message: error.message,
     })
@@ -93,7 +97,7 @@ const getCartItems = async (req, res) => {
     })
   } catch (error) {
     console.log(error);
-    res.json({
+    res.status(500).json({
       success: false,
       message: error.message,
     })
@@ -114,6 +118,11 @@ const updateCartItemQty = async (req, res) => {
     const findCurrentProduct = cart.items.find(item => item.productId.toString() === productId)
     if (!findCurrentProduct)
       throw new Error("Cart item is not present");
+
+    const product = await Product.findById(productId);
+
+    if (product.totalStock < quantity)
+      throw new Error(`Product Stock is not enough!`)
 
     findCurrentProduct.quantity = quantity;
     await cart.save();
@@ -142,7 +151,7 @@ const updateCartItemQty = async (req, res) => {
     })
   } catch (error) {
     console.log(error);
-    res.json({
+    res.status(500).json({
       success: false,
       message: error.message,
     })
@@ -188,7 +197,7 @@ const deleteCartItem = async (req, res) => {
     })
   } catch (error) {
     console.log(error);
-    res.json({
+    res.status(500).json({
       success: false,
       message: error.message,
     })

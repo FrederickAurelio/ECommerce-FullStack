@@ -6,30 +6,65 @@ const initialState = {
   isLoading: false
 }
 
-export const addToCart = createAsyncThunk("cart/addToCart", async ({ userId, productId, quantity }) => {
-  const res = await axios.post(`http://localhost:5000/api/shop/cart/add`,
-    { userId, productId, quantity },
-    { withCredentials: true })
-  return res?.data;
+export const addToCart = createAsyncThunk("cart/addToCart", async ({ userId, productId, quantity }, { rejectWithValue }) => {
+  try {
+    const res = await axios.post(`http://localhost:5000/api/shop/cart/add`,
+      { userId, productId, quantity },
+      { withCredentials: true })
+    return res?.data;
+  } catch (error) {
+    return rejectWithValue({
+      success: false,
+      message: error.response?.data?.message || "An error occurred",
+    });
+  }
 })
 
-export const getCartItems = createAsyncThunk("cart/getCartItems", async (userId) => {
-  const res = await axios.get(`http://localhost:5000/api/shop/cart/get/${userId}`,
-    { withCredentials: true })
-  return res?.data;
+export const getCartItems = createAsyncThunk("cart/getCartItems", async (userId, { rejectWithValue }) => {
+  try {
+    const res = await axios.get(`http://localhost:5000/api/shop/cart/get/${userId}`,
+      { withCredentials: true })
+    return res?.data;
+  } catch (error) {
+    return rejectWithValue({
+      success: false,
+      message: error.response?.data?.message || "An error occurred",
+    });
+  }
 })
 
-export const deleteCartItem = createAsyncThunk("cart/deleteCartItem", async ({ userId, productId }) => {
-  const res = await axios.delete(`http://localhost:5000/api/shop/cart/delete/${userId}/${productId}`,
-    { withCredentials: true })
-  return res?.data;
+export const deleteCartItem = createAsyncThunk("cart/deleteCartItem", async ({ userId, productId }, { rejectWithValue }) => {
+  try {
+    const res = await axios.delete(`http://localhost:5000/api/shop/cart/delete/${userId}/${productId}`,
+      { withCredentials: true })
+    return res?.data;
+  } catch (error) {
+    return rejectWithValue({
+      success: false,
+      message: error.response?.data?.message || "An error occurred",
+    });
+  }
 })
 
-export const updateCartItemQty = createAsyncThunk("cart/updateCartItemQty", async ({ userId, productId, quantity }) => {
-  const res = await axios.put(`http://localhost:5000/api/shop/cart/update-cart`, { userId, productId, quantity },
-    { withCredentials: true })
-  return res?.data;
-})
+export const updateCartItemQty = createAsyncThunk(
+  "cart/updateCartItemQty",
+  async ({ userId, productId, quantity }, { rejectWithValue }) => {
+    try {
+      const res = await axios.put(
+        `http://localhost:5000/api/shop/cart/update-cart`,
+        { userId, productId, quantity },
+        { withCredentials: true }
+      );
+      return res?.data;
+    } catch (error) {
+      return rejectWithValue({
+        success: false,
+        message: error.response?.data?.message || "An error occurred",
+      });
+    }
+  }
+);
+
 
 const shoppingCartSlice = createSlice({
   name: "shoppingCart",
@@ -46,7 +81,6 @@ const shoppingCartSlice = createSlice({
       })
       .addCase(getCartItems.rejected, (state) => {
         state.isLoading = false;
-        state.cartItems = [];
       })
       .addCase(addToCart.pending, (state) => {
         state.isLoading = true;
@@ -57,7 +91,6 @@ const shoppingCartSlice = createSlice({
       })
       .addCase(addToCart.rejected, (state) => {
         state.isLoading = false;
-        state.cartItems = [];
       })
       .addCase(updateCartItemQty.pending, (state) => {
         state.isLoading = true;
@@ -68,7 +101,6 @@ const shoppingCartSlice = createSlice({
       })
       .addCase(updateCartItemQty.rejected, (state) => {
         state.isLoading = false;
-        state.cartItems = [];
       })
       .addCase(deleteCartItem.pending, (state) => {
         state.isLoading = true;
@@ -79,7 +111,6 @@ const shoppingCartSlice = createSlice({
       })
       .addCase(deleteCartItem.rejected, (state) => {
         state.isLoading = false;
-        state.cartItems = [];
       })
   }
 })

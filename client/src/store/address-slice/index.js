@@ -6,29 +6,57 @@ const initialState = {
   addressList: []
 }
 
-export const addNewAddress = createAsyncThunk("/address/addNewAddress", async (formData) => {
-  const res = await axios.post("http://localhost:5000/api/shop/address/add", formData, { withCredentials: true });
+export const addNewAddress = createAsyncThunk("/address/addNewAddress", async (formData, { rejectWithValue }) => {
+  try {
+    const res = await axios.post("http://localhost:5000/api/shop/address/add", formData, { withCredentials: true });
 
-  return res.data;
+    return res.data;
+  } catch (error) {
+    return rejectWithValue({
+      success: false,
+      message: error.response?.data?.message || "An error occurred",
+    });
+  }
 })
 
-export const getAllAdresses = createAsyncThunk("/address/getAllAdresses", async (userId) => {
-  const res = await axios.get(`http://localhost:5000/api/shop/address/get/${userId}`,
-    { withCredentials: true });
+export const getAllAdresses = createAsyncThunk("/address/getAllAdresses", async (userId, { rejectWithValue }) => {
+  try {
+    const res = await axios.get(`http://localhost:5000/api/shop/address/get/${userId}`,
+      { withCredentials: true });
 
-  return res.data;
+    return res.data;
+  } catch (error) {
+    return rejectWithValue({
+      success: false,
+      message: error.response?.data?.message || "An error occurred",
+    });
+  }
 })
 
-export const editAddress = createAsyncThunk("/address/editAddress", async ({ userId, addressId, formData }) => {
-  const res = await axios.put(`http://localhost:5000/api/shop/address/update/${userId}/${addressId}`, formData, { withCredentials: true });
+export const editAddress = createAsyncThunk("/address/editAddress", async ({ userId, addressId, formData }, { rejectWithValue }) => {
+  try {
+    const res = await axios.put(`http://localhost:5000/api/shop/address/update/${userId}/${addressId}`, formData, { withCredentials: true });
 
-  return res.data;
+    return res.data;
+  } catch (error) {
+    return rejectWithValue({
+      success: false,
+      message: error.response?.data?.message || "An error occurred",
+    });
+  }
 })
 
-export const deleteAddress = createAsyncThunk("/address/deleteAddress", async ({ userId, addressId }) => {
-  const res = await axios.delete(`http://localhost:5000/api/shop/address/delete/${userId}/${addressId}`, { withCredentials: true });
+export const deleteAddress = createAsyncThunk("/address/deleteAddress", async ({ userId, addressId }, { rejectWithValue }) => {
+  try {
+    const res = await axios.delete(`http://localhost:5000/api/shop/address/delete/${userId}/${addressId}`, { withCredentials: true });
 
-  return res.data;
+    return res.data;
+  } catch (error) {
+    return rejectWithValue({
+      success: false,
+      message: error.response?.data?.message || "An error occurred",
+    });
+  }
 })
 
 const addressSlice = createSlice({
@@ -55,7 +83,6 @@ const addressSlice = createSlice({
       })
       .addCase(getAllAdresses.rejected, (state) => {
         state.isLoading = false;
-        state.addressList = [];
       })
       .addCase(editAddress.pending, (state) => {
         state.isLoading = true;

@@ -9,34 +9,69 @@ const initialState = {
   orderDetails: null,
 }
 
-export const createNewOrder = createAsyncThunk("/order/createNewOrder", async (orderData) => {
-  const res = await axios.post("http://localhost:5000/api/shop/order/create", orderData, { withCredentials: true });
+export const createNewOrder = createAsyncThunk("/order/createNewOrder", async (orderData, { rejectWithValue }) => {
+  try {
+    const res = await axios.post("http://localhost:5000/api/shop/order/create", orderData, { withCredentials: true });
 
-  return res.data;
+    return res.data;
+  } catch (error) {
+    return rejectWithValue({
+      success: false,
+      message: error.response?.data?.message || "An error occurred",
+    });
+  }
 })
 
-export const capturePayment = createAsyncThunk("/order/capturePayment", async ({ paymentId, payerId, orderId }) => {
-  const res = await axios.post("http://localhost:5000/api/shop/order/capture", { paymentId, payerId, orderId }, { withCredentials: true });
+export const capturePayment = createAsyncThunk("/order/capturePayment", async ({ paymentId, payerId, orderId }, { rejectWithValue }) => {
+  try {
+    const res = await axios.post("http://localhost:5000/api/shop/order/capture", { paymentId, payerId, orderId }, { withCredentials: true });
 
-  return res.data;
+    return res.data;
+  } catch (error) {
+    return rejectWithValue({
+      success: false,
+      message: error.response?.data?.message || "An error occurred",
+    });
+  }
 })
 
-export const continuePayment = createAsyncThunk("/order/continuePayment", async (orderData) => {
-  const res = await axios.post("http://localhost:5000/api/shop/order/continue", orderData, { withCredentials: true });
+export const continuePayment = createAsyncThunk("/order/continuePayment", async (orderData, { rejectWithValue }) => {
+  try {
+    const res = await axios.post("http://localhost:5000/api/shop/order/continue", orderData, { withCredentials: true });
 
-  return res.data;
+    return res.data;
+  } catch (error) {
+    return rejectWithValue({
+      success: false,
+      message: error.response?.data?.message || "An error occurred",
+    });
+  }
 })
 
-export const getAllOrdersByUser = createAsyncThunk("/order/getAllOrdersByUser", async (userId) => {
-  const res = await axios.get(`http://localhost:5000/api/shop/order/list/${userId}`, { withCredentials: true });
+export const getAllOrdersByUser = createAsyncThunk("/order/getAllOrdersByUser", async (userId, { rejectWithValue }) => {
+  try {
+    const res = await axios.get(`http://localhost:5000/api/shop/order/list/${userId}`, { withCredentials: true });
 
-  return res.data;
+    return res.data;
+  } catch (error) {
+    return rejectWithValue({
+      success: false,
+      message: error.response?.data?.message || "An error occurred",
+    });
+  }
 })
 
-export const getOrderDetails = createAsyncThunk("/order/getOrderDetails", async (id) => {
-  const res = await axios.get(`http://localhost:5000/api/shop/order/details/${id}`, { withCredentials: true });
+export const getOrderDetails = createAsyncThunk("/order/getOrderDetails", async (id, { rejectWithValue }) => {
+  try {
+    const res = await axios.get(`http://localhost:5000/api/shop/order/details/${id}`, { withCredentials: true });
 
-  return res.data;
+    return res.data;
+  } catch (error) {
+    return rejectWithValue({
+      success: false,
+      message: error.response?.data?.message || "An error occurred",
+    });
+  }
 })
 
 const shoppingOrderSlice = createSlice({
@@ -56,8 +91,6 @@ const shoppingOrderSlice = createSlice({
       })
       .addCase(createNewOrder.rejected, (state) => {
         state.isLoading = false;
-        state.approvalURL = null;
-        state.orderId = null;
       })
       .addCase(continuePayment.pending, (state) => {
         state.isLoading = true;
@@ -70,8 +103,6 @@ const shoppingOrderSlice = createSlice({
       })
       .addCase(continuePayment.rejected, (state) => {
         state.isLoading = false;
-        state.approvalURL = null;
-        state.orderId = null;
       })
       .addCase(capturePayment.pending, (state) => {
         state.isLoading = true;
@@ -93,7 +124,6 @@ const shoppingOrderSlice = createSlice({
       })
       .addCase(getAllOrdersByUser.rejected, (state) => {
         state.isLoading = false;
-        state.orderList = [];
       })
       .addCase(getOrderDetails.pending, (state) => {
         state.isLoading = true;
@@ -104,7 +134,6 @@ const shoppingOrderSlice = createSlice({
       })
       .addCase(getOrderDetails.rejected, (state) => {
         state.isLoading = false;
-        state.orderDetails = null;
       })
   }
 })
