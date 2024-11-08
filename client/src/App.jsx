@@ -22,6 +22,7 @@ import { Skeleton } from "./components/ui/skeleton";
 import { FilterProvider } from "./components/shopping-view/UseFilter";
 import PaypalReturnPage from "./pages/shopping-view/paypal-return";
 import PaymentSuccessPage from "./pages/shopping-view/payment-success";
+import SearchPage from "./pages/shopping-view/search";
 
 function App() {
   const dispatch = useDispatch();
@@ -75,6 +76,7 @@ function App() {
           >
             <Route path="home" element={<ShoppingHome />} />
             <Route path="listing" element={<ShoppiungListing />} />
+            <Route path="search" element={<SearchPage />} />
             <Route path="checkout" element={<ShoppingCheckout />} />
             <Route path="account" element={<ShoppingAccount />} />
             <Route path="paypal-return" element={<PaypalReturnPage />} />

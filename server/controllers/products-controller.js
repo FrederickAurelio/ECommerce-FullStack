@@ -14,7 +14,7 @@ const imgUpload = multer({ storage: storage });
 
 const createProduct = async (req, res) => {
   if (!req?.file) {
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       message: "Please upload an image"
     })

@@ -39,7 +39,11 @@ function MenuItems() {
               category: [menuItem.id],
               brand: [],
             };
-            if (menuItem.path === "/shop/home" || menuItem.id === "products")
+            if (
+              menuItem.id === "products" ||
+              menuItem.id === "search" ||
+              menuItem.id === "home"
+            )
               setCheckFilter({
                 category: [],
                 brand: [],

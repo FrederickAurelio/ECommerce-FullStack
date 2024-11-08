@@ -93,8 +93,6 @@ const loginUser = async (req, res) => {
 
 // logout
 const logoutUser = (req, res) => {
-  console.log("LOGOUT");
-
   // Attempt to clear the cookie without any extra options
   res.clearCookie("token");
 
@@ -115,7 +113,6 @@ const authMiddleware = async (req, res, next) => {
 
   try {
     const decoded = jwt.verify(token, "CLIENT_SCECRET_KEY");
-    // THIS IS BAD BECAUSE WE MUST ONLY STORE THE USER ID AND THEN FETCH TO SEND IT
     req.user = decoded;
     next();
   } catch (error) {

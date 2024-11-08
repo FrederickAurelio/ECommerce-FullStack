@@ -1,4 +1,5 @@
 const Product = require("../models/Products");
+const Review = require("../models/Review");
 const { addUrlProducts, addUrlProduct } = require("./products-controller");
 
 const getFilteredProducts = async (req, res) => {
@@ -49,11 +50,18 @@ const getProductDetails = async (req, res) => {
   try {
     const { id } = req.params;
     const product = await Product.findById(id);
-    const addedUrlProduct = addUrlProduct(product, req)
     if (!product) throw new Error("Product Not Found");
+
+    const addedUrlProduct = addUrlProduct(product, req);
+    const reviews = await Review.findOne({ productId: id }).populate("reviews.userId", "userName") || { reviews: [] };
+    const finalProduct = {
+      ...addedUrlProduct._doc,
+      reviews: reviews?.reviews,
+    }
+
     return res.status(200).json({
       success: true,
-      product: addedUrlProduct,
+      product: finalProduct,
       message: "Success Fetch Data"
     })
   } catch (error) {

@@ -9,6 +9,8 @@ const cartProductRouter = require("./routes/cart-route");
 const addressRouter = require("./routes/address-route");
 const orderRouter = require("./routes/order-route");
 const adminOrderRouter = require("./routes/admin-order-route");
+const searchRouter = require("./routes/search-route");
+const productReviewRouter = require("./routes/review-route");
 require('dotenv').config();
 
 
@@ -48,5 +50,7 @@ app.use("/api/shop/products", shopProductsRouter);
 app.use("/api/shop/cart", cartProductRouter);
 app.use("/api/shop/address", addressRouter);
 app.use("/api/shop/order", orderRouter);
+app.use("/api/shop/search", searchRouter);
+app.use("/api/shop/review", productReviewRouter);
 
 app.listen(PORT, () => console.log(`Server is now running on port ${PORT}`))

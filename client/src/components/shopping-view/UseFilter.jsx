@@ -17,8 +17,7 @@ const FilterProvider = ({ children }) => {
 
   useEffect(() => {
     if (
-      (location.pathname === "/shop/listing" ||
-        location.pathname === "/shop/home") &&
+      (location.pathname === "/shop/listing") &&
       isAuthenticated
     ) {
       searchParams.set("filter", JSON.stringify(checkFilter));
@@ -39,3 +38,4 @@ const useFilter = () => {
 };
 
 export { useFilter, FilterProvider };
+

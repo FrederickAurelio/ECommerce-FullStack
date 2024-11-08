@@ -14,8 +14,8 @@ function ShoppingProductTile({
   const dispatch = useDispatch();
   const location = useLocation();
 
-  function handleGetDetailsProduct(productId) {
-    if (location.pathname === "/shop/listing")
+  function handleGetDetailsProduct(productId, isPass) {
+    if (location.pathname === "/shop/listing" || isPass === "pass")
       dispatch(getDetailedProducts(productId));
   }
 
@@ -74,7 +74,7 @@ function ShoppingProductTile({
             <Button
               onClick={() => {
                 navigate("/shop/listing");
-                handleGetDetailsProduct(product?._id);
+                handleGetDetailsProduct(product?._id, "pass");
               }}
               className="w-full"
             >

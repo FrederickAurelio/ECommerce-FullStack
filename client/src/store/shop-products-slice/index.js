@@ -31,6 +31,18 @@ export const getDetailedProducts = createAsyncThunk("/adminProducts/getDetailedP
   }
 })
 
+export const createReview = createAsyncThunk("/adminProducts/createReview", async ({ productId, comment, rating }, { rejectWithValue }) => {
+  try {
+    const response = await axios.post(`http://localhost:5000/api/shop/review/create/${productId}`, { comment, rating }, { withCredentials: true });
+    return response.data;
+  } catch (error) {
+    return rejectWithValue({
+      success: false,
+      message: error.response?.data?.message || "An error occurred",
+    });
+  }
+})
+
 const ShopProductsSlice = createSlice({
   name: "shopProducts",
   initialState,
@@ -59,6 +71,15 @@ const ShopProductsSlice = createSlice({
         state.productDetails = action.payload.product;
       })
       .addCase(getDetailedProducts.rejected, (state) => {
+        state.isLoading = false;
+      })
+      .addCase(createReview.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(createReview.fulfilled, (state) => {
+        state.isLoading = false;
+      })
+      .addCase(createReview.rejected, (state) => {
         state.isLoading = false;
       })
   }
