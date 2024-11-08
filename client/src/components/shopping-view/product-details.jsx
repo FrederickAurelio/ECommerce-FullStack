@@ -4,13 +4,13 @@ import { Button } from "../ui/button";
 import { Dialog, DialogContent } from "../ui/dialog";
 import { Separator } from "../ui/separator";
 import { Input } from "../ui/input";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
   createReview,
   getDetailedProducts,
   setProductDetails,
 } from "@/store/shop-products-slice";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "@/hooks/use-toast";
 
 function ProductDetailsDialog({
@@ -20,11 +20,17 @@ function ProductDetailsDialog({
   handleAddToCart,
 }) {
   const dispatch = useDispatch();
+  const { user } = useSelector((state) => state.auth);
+  const ownReview = productDetails?.reviews.find(
+    (review) => review.userId._id === user.id,
+  );
+
   const avgRating =
     productDetails?.reviews.reduce((acc, review) => acc + review.rating, 0) /
     productDetails?.reviews.length;
-  const [comment, setComment] = useState("");
-  const [rating, setRating] = useState(0);
+  const [isSubmit, setIsSubmit] = useState(false);
+  const [comment, setComment] = useState(ownReview?.comment || "");
+  const [rating, setRating] = useState(ownReview?.rating || 0);
   const [hoverRating, setHoverRating] = useState(0);
 
   function handleDialogClose() {
@@ -32,10 +38,12 @@ function ProductDetailsDialog({
     setRating(0);
     setHoverRating(0);
     setComment("");
+    setIsSubmit(false);
     dispatch(setProductDetails());
   }
 
-  function handlePostReview() {
+  function handlePostReview(e) {
+    e.preventDefault();
     if (rating === 0) {
       toast({
         title: "Please give a rating first",
@@ -63,10 +71,18 @@ function ProductDetailsDialog({
       });
       dispatch(getDetailedProducts(productDetails?._id));
     });
+    setIsSubmit(true);
     setComment("");
     setRating(0);
     setHoverRating(0);
   }
+
+  useEffect(() => {
+    if (!isSubmit) {
+      setComment(ownReview?.comment);
+      setRating(ownReview?.rating);
+    }
+  }, [ownReview]);
 
   return (
     <Dialog open={open} onOpenChange={handleDialogClose}>
@@ -149,7 +165,6 @@ function ProductDetailsDialog({
                           key={i}
                         />
                       ))}
-                      {console.log(review)}
                     </div>
                     <p className="text-muted-foreground">{review.comment}</p>
                   </div>
@@ -171,14 +186,16 @@ function ProductDetailsDialog({
               />
             ))}
           </div>
-          <div className="mt-2 flex gap-2">
-            <Input
-              value={comment}
-              onChange={(e) => setComment(e.target.value)}
-              placeholder="Write a review..."
-            />
-            <Button onClick={() => handlePostReview()}>Submit</Button>
-          </div>
+          <form onSubmit={handlePostReview}>
+            <div className="mt-2 flex gap-2">
+              <Input
+                value={comment}
+                onChange={(e) => setComment(e.target.value)}
+                placeholder="Write a review..."
+              />
+              <Button>Submit</Button>
+            </div>
+          </form>
         </div>
       </DialogContent>
     </Dialog>

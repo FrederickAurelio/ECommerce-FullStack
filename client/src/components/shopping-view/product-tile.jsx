@@ -15,6 +15,7 @@ function ShoppingProductTile({
   const location = useLocation();
 
   function handleGetDetailsProduct(productId, isPass) {
+    if (product?.totalStock === 0) return null;
     if (location.pathname === "/shop/listing" || isPass === "pass")
       dispatch(getDetailedProducts(productId));
   }

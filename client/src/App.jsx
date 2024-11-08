@@ -43,6 +43,12 @@ function App() {
       <FilterProvider>
         <Routes>
           <Route
+            path="/"
+            element={
+              <CheckAuth isAuthenticated={isAuthenticated} user={user} />
+            }
+          />
+          <Route
             path="/auth"
             element={
               <CheckAuth isAuthenticated={isAuthenticated} user={user}>
