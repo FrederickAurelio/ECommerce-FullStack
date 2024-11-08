@@ -77,7 +77,11 @@ export const getOrderDetails = createAsyncThunk("/order/getOrderDetails", async 
 const shoppingOrderSlice = createSlice({
   name: "shopOrder",
   initialState,
-  reducers: {},
+  reducers: {
+    resetShopOrderDetails: (state) => {
+      state.orderDetails = null
+    }
+  },
   extraReducers: (builder) => {
     builder
       .addCase(createNewOrder.pending, (state) => {
@@ -139,3 +143,4 @@ const shoppingOrderSlice = createSlice({
 })
 
 export default shoppingOrderSlice.reducer;
+export const { resetShopOrderDetails } = shoppingOrderSlice.actions;

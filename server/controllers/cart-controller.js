@@ -70,7 +70,11 @@ const getCartItems = async (req, res) => {
       select: "imageUrl title price salePrice"
     })
     if (!cart)
-      throw new Error("Cart not found")
+      return res.status(200).json({
+        success: true,
+        message: "Cart is empty",
+        cart: []
+      })
 
     // So if the Product is deleted the productItem will be null and get filtered
     const validItems = cart.items.filter(productItem => productItem.productId);

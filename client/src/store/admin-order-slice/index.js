@@ -1,5 +1,6 @@
 import axios from "axios"
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { resetShopOrderDetails } from "../order-slice";
 
 const initialState = {
   isLoading: false,
@@ -50,7 +51,11 @@ export const updateOrderStatus = createAsyncThunk("/order/updateOrderStatus", as
 const adminOrderSlice = createSlice({
   name: "adminOrderSlice",
   initialState,
-  reducers: {},
+  reducers: {
+    resetAdminOrderDetails: (state) => {
+      state.orderDetails = null;
+    }
+  },
   extraReducers: (builder) => {
     builder
       .addCase(getAllOrdersForAdmin.pending, (state) => {
@@ -87,3 +92,4 @@ const adminOrderSlice = createSlice({
 })
 
 export default adminOrderSlice.reducer;
+export const { resetAdminOrderDetails } = adminOrderSlice.actions
